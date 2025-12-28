@@ -118,4 +118,27 @@
 
   </div>
 </div>
+
+<script>
+document.getElementById("id_course").addEventListener("change", function () {
+    const courseId = this.value;
+    const resourceSelect = document.getElementById("id_resource");
+
+    resourceSelect.innerHTML = "<option value=''>Select Resource</option>";
+
+    if (!courseId) return;
+
+    fetch(`/ajax/resources/?course_id=${courseId}`)
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(r => {
+                const option = document.createElement("option");
+                option.value = r.id;
+                option.textContent = r.title;
+                resourceSelect.appendChild(option);
+            });
+        });
+});
+</script>
+
 {% endblock %}

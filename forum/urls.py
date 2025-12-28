@@ -16,4 +16,5 @@ urlpatterns = [
     path('report/reply/<int:pk>/', views.report_reply, name='report-reply'),
     path('reports/', views.reports_view, name='reports-list'),
     path('reports/<int:pk>/resolve/', views.resolve_report, name='resolve-report'),
+    path('ajax/resources/', views.load_resources_for_course, name='ajax_resources'),
 ]

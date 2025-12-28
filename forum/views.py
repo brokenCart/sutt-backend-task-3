@@ -1,5 +1,5 @@
 from django.core.paginator import Paginator
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
@@ -171,3 +171,12 @@ def resolve_report(request, pk):
         report.save()
         return redirect('reports-list')
     return HttpResponseForbidden()
+
+@login_required
+def load_resources_for_course(request):
+    course_id = request.GET.get('course_id')
+    resources = models.Resource.objects.filter(course_id=course_id)
+    return JsonResponse(
+        [{'id': r.id, 'title': r.title} for r in resources],
+        safe=False
+    )

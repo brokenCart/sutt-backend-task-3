@@ -28,6 +28,7 @@ class CreateThreadForm(forms.ModelForm):
         }
     
     def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.fields['resource'].queryset = Resource.objects.none()
         if 'course' in self.data:
             try:
