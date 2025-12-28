@@ -1,5 +1,5 @@
 from django import forms
-from .models import Thread, Reply, Report
+from .models import Thread, Reply, Report, Resource
 
 class CreateThreadForm(forms.ModelForm):
     class Meta:
@@ -26,6 +26,17 @@ class CreateThreadForm(forms.ModelForm):
             }),
             'tags': forms.CheckboxSelectMultiple(),
         }
+    
+    def __init__(self, *args, **kwargs):
+        self.fields['resource'].queryset = Resource.objects.none()
+        if 'course' in self.data:
+            try:
+                course_id = int(self.data.get('course'))
+                self.fields['resource'].queryset = Resource.objects.filter(course_id=course_id)
+            except (ValueError, TypeError):
+                pass
+        elif self.instance.pk and self.instance.course:
+            self.fields['resource'].queryset = Resource.objects.filter(course=self.instance.course)
 
 class CreateReplyForm(forms.ModelForm):
     class Meta:

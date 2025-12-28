@@ -40,11 +40,14 @@ def create_thread(request):
         form = CreateThreadForm(request.POST)
         if form.is_valid():
             thread = form.save(commit=False)
-            thread.author = request.user
-            thread.save()
-            form.save_m2m()
-            messages.success(request, 'Your thread has been created!')
-            return redirect('thread-view', category_slug=thread.category.slug, pk=thread.id)
+            if thread.resource and thread.course != thread.resource.course:
+                messages.warning(request, 'The resource should be of the same course!')
+            else:
+                thread.author = request.user
+                thread.save()
+                form.save_m2m()
+                messages.success(request, 'Your thread has been created!')
+                return redirect('thread-view', category_slug=thread.category.slug, pk=thread.id)
     else:
         form = CreateThreadForm()
     return render(request, 'forum/create_thread.html', {'form': form})
