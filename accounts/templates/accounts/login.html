@@ -1,0 +1,44 @@
+{% extends "forum/base.html" %}
+{% load socialaccount %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center"
+     style="min-height: calc(100vh - 70px);">
+
+  <div class="card shadow-lg border-0"
+       style="max-width: 420px; width: 100%; background-color: #121212;">
+
+    <div class="card-body p-4 text-center">
+
+      <h2 class="fw-bold text-white mb-2">
+        StudyDeck Forum
+      </h2>
+
+      <p class="text-secondary mb-4">
+        Sign in using your <strong>BITS Google account</strong>
+      </p>
+
+      <a href="{% provider_login_url 'google' %}"
+         class="btn btn-light btn-lg w-100 d-flex align-items-center justify-content-center gap-3">
+
+        <img
+          src="https://developers.google.com/identity/images/g-logo.png"
+          alt="Google"
+          width="20"
+          height="20"
+        >
+
+        <span class="fw-semibold text-dark">
+          Continue with Google
+        </span>
+      </a>
+
+      <p class="text-muted small mt-4 mb-0">
+        Only <code>@bits-pilani.ac.in</code> emails are allowed
+      </p>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

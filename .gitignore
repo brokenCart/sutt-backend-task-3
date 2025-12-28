@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+.Python
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+
+# Virtual Environments
+venv/
+.venv/
+env/
+.env/
+
+# Django-specific
+*.log
+*.pot
+*.sqlite3
+local_settings.py
+media/  # User uploaded media files (often generated locally or managed by a separate service)
+static/ # Collected static files (generated during deployment via collectstatic)
+
+# IDE-specific
+.idea/        # JetBrains IDEs (PyCharm, etc)
+.vscode/      # VS Code
+.DS_Store     # macOS
+Thumbs.db     # Windows
+
+# Testing and coverage
+.tox/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# staticfiles
+staticfiles/
