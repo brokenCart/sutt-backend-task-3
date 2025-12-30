@@ -6,8 +6,7 @@
 <div class="row justify-content-center">
   <div class="col-lg-8 col-md-10">
 
-    <div class="card shadow-sm border-0"
-         style="background-color: #121212;">
+    <div class="card shadow-sm border-0" style="background-color: #121212;">
 
       <div class="card-body p-4">
 
@@ -29,7 +28,7 @@
             </label>
             {{ form.title }}
             {% for error in form.title.errors %}
-              <div class="text-danger small mt-1">{{ error }}</div>
+            <div class="text-danger small mt-1">{{ error }}</div>
             {% endfor %}
           </div>
 
@@ -71,10 +70,10 @@
 
             <div class="d-flex flex-wrap gap-2">
               {% for checkbox in form.tags %}
-                <label class="btn btn-outline-secondary btn-sm">
-                  {{ checkbox.tag }}
-                  {{ checkbox.choice_label }}
-                </label>
+              <label class="btn btn-outline-secondary btn-sm">
+                {{ checkbox.tag }}
+                {{ checkbox.choice_label }}
+              </label>
               {% endfor %}
             </div>
 
@@ -83,9 +82,9 @@
             </div>
 
             {% if form.tags.errors %}
-              <div class="text-danger small mt-1">
-                {{ form.tags.errors }}
-              </div>
+            <div class="text-danger small mt-1">
+              {{ form.tags.errors }}
+            </div>
             {% endif %}
           </div>
 
@@ -96,7 +95,7 @@
             </label>
             {{ form.content }}
             {% for error in form.content.errors %}
-              <div class="text-danger small mt-1">{{ error }}</div>
+            <div class="text-danger small mt-1">{{ error }}</div>
             {% endfor %}
           </div>
 
@@ -120,7 +119,7 @@
 </div>
 
 <script>
-document.getElementById("id_course").addEventListener("change", function () {
+  document.getElementById("id_course").addEventListener("change", function () {
     const courseId = this.value;
     const resourceSelect = document.getElementById("id_resource");
 
@@ -129,16 +128,16 @@ document.getElementById("id_course").addEventListener("change", function () {
     if (!courseId) return;
 
     fetch(`/ajax/resources/?course_id=${courseId}`)
-        .then(res => res.json())
-        .then(data => {
-            data.forEach(r => {
-                const option = document.createElement("option");
-                option.value = r.id;
-                option.textContent = r.title;
-                resourceSelect.appendChild(option);
-            });
+      .then(res => res.json())
+      .then(data => {
+        data.forEach(r => {
+          const option = document.createElement("option");
+          option.value = r.id;
+          option.textContent = r.title;
+          resourceSelect.appendChild(option);
         });
-});
+      });
+  });
 </script>
 
 {% endblock %}

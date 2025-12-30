@@ -180,3 +180,31 @@ def load_resources_for_course(request):
         [{'id': r.id, 'title': r.title} for r in resources],
         safe=False
     )
+
+@login_required
+def toggle_thread_like(request, pk):
+    thread = get_object_or_404(models.Thread, pk=pk)
+    if request.method == 'POST':
+        upvote = models.UpvoteThread.objects.filter(thread=thread, user=request.user).first()
+        if upvote:
+            upvote.delete()
+        else:
+            upvote = models.UpvoteThread(thread=thread, user=request.user)
+            upvote.save()
+    liked = models.UpvoteThread.objects.filter(thread=thread, user=request.user).exists()
+    upvote_count = models.UpvoteThread.objects.filter(thread=thread).count()
+    return JsonResponse({'upvote_count': upvote_count, 'liked': liked})
+
+@login_required
+def toggle_reply_like(request, pk):
+    reply = get_object_or_404(models.Reply, pk=pk)
+    if request.method == 'POST':
+        upvote = models.UpvoteReply.objects.filter(reply=reply, user=request.user).first()
+        if upvote:
+            upvote.delete()
+        else:
+            upvote = models.UpvoteReply(reply=reply, user=request.user)
+            upvote.save()
+    liked = models.UpvoteReply.objects.filter(reply=reply, user=request.user).exists()
+    upvote_count = models.UpvoteReply.objects.filter(reply=reply).count()
+    return JsonResponse({'upvote_count': upvote_count, 'liked': liked})

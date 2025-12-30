@@ -2,11 +2,9 @@
 {% load socialaccount %}
 
 {% block content %}
-<div class="d-flex justify-content-center align-items-center"
-     style="min-height: calc(100vh - 70px);">
+<div class="d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 70px);">
 
-  <div class="card shadow-lg border-0"
-       style="max-width: 420px; width: 100%; background-color: #121212;">
+  <div class="card shadow-lg border-0" style="max-width: 420px; width: 100%; background-color: #121212;">
 
     <div class="card-body p-4 text-center">
 
@@ -19,14 +17,9 @@
       </p>
 
       <a href="{% provider_login_url 'google' %}"
-         class="btn btn-light btn-lg w-100 d-flex align-items-center justify-content-center gap-3">
+        class="btn btn-light btn-lg w-100 d-flex align-items-center justify-content-center gap-3">
 
-        <img
-          src="https://developers.google.com/identity/images/g-logo.png"
-          alt="Google"
-          width="20"
-          height="20"
-        >
+        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" width="20" height="20">
 
         <span class="fw-semibold text-dark">
           Continue with Google

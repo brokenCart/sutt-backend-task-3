@@ -89,8 +89,11 @@
 
               <!-- Upvotes -->
               <span class="text-muted small">
-                👍 {{ thread.upvotes }} upvotes
+                👍 <span class="thread-upvote-count" data-thread-id="{{ thread.id }}">
+                  0
+                </span> upvotes
               </span>
+
 
               <div class="d-flex gap-2">
 
@@ -183,4 +186,24 @@
 
   </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    document.querySelectorAll(".thread-upvote-count").forEach(span => {
+      const threadId = span.dataset.threadId;
+
+      fetch(`/thread/${threadId}/like/`)   // GET request
+        .then(res => res.json())
+        .then(data => {
+          span.innerText = data.upvote_count;
+        })
+        .catch(() => {
+          span.innerText = "0";
+        });
+    });
+
+  });
+</script>
+
 {% endblock content %}

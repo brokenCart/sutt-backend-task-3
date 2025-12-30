@@ -17,4 +17,6 @@ urlpatterns = [
     path('reports/', views.reports_view, name='reports-list'),
     path('reports/<int:pk>/resolve/', views.resolve_report, name='resolve-report'),
     path('ajax/resources/', views.load_resources_for_course, name='ajax_resources'),
+    path('thread/<int:pk>/like/', views.toggle_thread_like, name='toggle-thread-like'),
+    path('reply/<int:pk>/like/', views.toggle_reply_like, name='toggle-reply-like'),
 ]

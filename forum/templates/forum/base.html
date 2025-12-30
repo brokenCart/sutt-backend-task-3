@@ -49,77 +49,67 @@
             {% endif %}
 
             <!-- RIGHT: Actions + User info -->
-<div class="d-flex align-items-center gap-3 ms-auto">
+            <div class="d-flex align-items-center gap-3 ms-auto">
 
-    {% if user.is_authenticated %}
+                {% if user.is_authenticated %}
 
-    <!-- MODERATOR: Reports -->
-    {% if perms.forum.view_report_page %}
-    <a href="{% url 'reports-list' %}"
-       class="btn btn-sm btn-outline-warning fw-semibold">
-        🚩 Reports
-    </a>
-    {% endif %}
+                <!-- MODERATOR: Reports -->
+                {% if perms.forum.view_report_page %}
+                <a href="{% url 'reports-list' %}" class="btn btn-sm btn-outline-warning fw-semibold">
+                    🚩 Reports
+                </a>
+                {% endif %}
 
-    <a href="{% url 'category-list' %}"
-       class="btn btn-sm btn-outline-light fw-semibold">
-        Categories
-    </a>
+                <a href="{% url 'category-list' %}" class="btn btn-sm btn-outline-light fw-semibold">
+                    Categories
+                </a>
 
-    <a href="{% url 'create-thread' %}"
-       class="btn btn-sm btn-primary fw-semibold">
-        Create Thread
-    </a>
+                <a href="{% url 'create-thread' %}" class="btn btn-sm btn-primary fw-semibold">
+                    Create Thread
+                </a>
 
-    <!-- USER DROPDOWN -->
-    <div class="dropdown">
-        <a href="#"
-           class="d-flex align-items-center text-decoration-none dropdown-toggle"
-           data-bs-toggle="dropdown"
-           aria-expanded="false">
+                <!-- USER DROPDOWN -->
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle"
+                        data-bs-toggle="dropdown" aria-expanded="false">
 
-            {% if user.socialaccount_set.first.extra_data.picture %}
-            <img src="{{ user.socialaccount_set.first.extra_data.picture }}"
-                 class="rounded-circle border border-secondary"
-                 width="38"
-                 height="38"
-                 referrerpolicy="no-referrer"
-                 alt="Profile">
-            {% else %}
-            <img src="{% static 'forum/default_user.jpg' %}"
-                 class="rounded-circle border border-secondary"
-                 width="38"
-                 height="38"
-                 alt="Profile">
-            {% endif %}
-        </a>
+                        {% if user.socialaccount_set.first.extra_data.picture %}
+                        <img src="{{ user.socialaccount_set.first.extra_data.picture }}"
+                            class="rounded-circle border border-secondary" width="38" height="38"
+                            referrerpolicy="no-referrer" alt="Profile">
+                        {% else %}
+                        <img src="{% static 'forum/default_user.jpg' %}" class="rounded-circle border border-secondary"
+                            width="38" height="38" alt="Profile">
+                        {% endif %}
+                    </a>
 
-        <ul class="dropdown-menu dropdown-menu-end shadow">
-            <li class="px-3 py-2">
-                <div class="fw-semibold">
-                    {{ user.socialaccount_set.first.extra_data.name|default:user }}
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li class="px-3 py-2">
+                            <div class="fw-semibold">
+                                {{ user.socialaccount_set.first.extra_data.name|default:user }}
+                            </div>
+                            <div class="text-muted small">
+                                {{ user.email }}
+                            </div>
+                        </li>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <form method="post" action="{% url 'account_logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item text-danger">
+                                    Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
-                <div class="text-muted small">
-                    {{ user.email }}
-                </div>
-            </li>
 
-            <li><hr class="dropdown-divider"></li>
-
-            <li>
-                <form method="post" action="{% url 'account_logout' %}">
-                    {% csrf_token %}
-                    <button type="submit"
-                            class="dropdown-item text-danger">
-                        Logout
-                    </button>
-                </form>
-            </li>
-        </ul>
-    </div>
-
-    {% endif %}
-</div>
+                {% endif %}
+            </div>
 
 
         </div>

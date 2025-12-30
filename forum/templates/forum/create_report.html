@@ -16,18 +16,18 @@
         <div class="alert alert-light border mb-4">
 
           {% if object_type == "thread" %}
-            <strong>Thread:</strong> {{ object.title }} <br>
-            <small class="text-muted">
-              Posted by {{ object.author.get_full_name|default:"Deleted user" }}
-            </small>
-            <hr>
-            <p class="mb-0">{{ object.content|truncatewords:50 }}</p>
+          <strong>Thread:</strong> {{ object.title }} <br>
+          <small class="text-muted">
+            Posted by {{ object.author.get_full_name|default:"Deleted user" }}
+          </small>
+          <hr>
+          <p class="mb-0">{{ object.content|truncatewords:50 }}</p>
 
           {% elif object_type == "reply" %}
-            <strong>Reply by:</strong>
-            {{ object.author.get_full_name|default:"Deleted user" }}
-            <hr>
-            <p class="mb-0">{{ object.content|truncatewords:50 }}</p>
+          <strong>Reply by:</strong>
+          {{ object.author.get_full_name|default:"Deleted user" }}
+          <hr>
+          <p class="mb-0">{{ object.content|truncatewords:50 }}</p>
           {% endif %}
 
         </div>
@@ -42,20 +42,18 @@
             </label>
             {{ form.reason }}
             {% if form.reason.errors %}
-              <div class="text-danger small mt-1">
-                {{ form.reason.errors.0 }}
-              </div>
+            <div class="text-danger small mt-1">
+              {{ form.reason.errors.0 }}
+            </div>
             {% endif %}
           </div>
 
           <div class="d-flex justify-content-end gap-2 mt-4">
-            <a href="{{ 'javascript:history.back()' }}"
-               class="btn btn-outline-secondary">
+            <a href="{{ 'javascript:history.back()' }}" class="btn btn-outline-secondary">
               Cancel
             </a>
 
-            <button type="submit"
-                    class="btn btn-danger">
+            <button type="submit" class="btn btn-danger">
               Submit Report
             </button>
           </div>

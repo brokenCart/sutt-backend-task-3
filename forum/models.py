@@ -46,7 +46,6 @@ class Thread(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     content = models.TextField()
     created_timestamp = models.DateTimeField(default=timezone.now)
-    upvotes = models.PositiveIntegerField(default=0)
     is_locked = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
@@ -59,7 +58,7 @@ class Thread(models.Model):
         ]
     
     def __str__(self):
-        return f"{self.author}: {self.title}"
+        return f'{self.author}: {self.title}'
 
 class Reply(models.Model):
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
@@ -67,12 +66,40 @@ class Reply(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     content = models.TextField()
     created_timestamp = models.DateTimeField(default=timezone.now)
-    upvotes = models.PositiveIntegerField(default=0)
     is_deleted = models.BooleanField(default=False)
 
     class Meta:
         permissions = [
             ('delete_any_reply', 'Can delete any reply'),
+        ]
+    
+    def __str__(self):
+        return f'{self.author}: {self.content[:100]}'
+
+class UpvoteThread(models.Model):
+    thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_timestamp = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['thread', 'user'],
+                name='unique_thread_upvote',
+            )
+        ]
+
+class UpvoteReply(models.Model):
+    reply = models.ForeignKey(Reply, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_timestamp = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['reply', 'user'],
+                name='unique_reply_upvote',
+            )
         ]
 
 class Report(models.Model):
