@@ -22,6 +22,9 @@ venv/
 env/
 .env/
 
+# Environment Variables
+.env
+
 # Django-specific
 *.log
 *.pot

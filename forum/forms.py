@@ -1,64 +1,86 @@
 from django import forms
-from .models import Thread, Reply, Report, Resource
+
+from .models import Reply, Report, Resource, Thread
+
 
 class CreateThreadForm(forms.ModelForm):
     class Meta:
         model = Thread
-        fields = ['title', 'course', 'resource', 'category', 'tags', 'content']
+        fields = ["title", "course", "resource", "category", "tags", "content"]
         widgets = {
-            'title': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter a clear, concise title',
-            }),
-            'course': forms.Select(attrs={
-                'class': 'form-select',
-            }),
-            'resource': forms.Select(attrs={
-                'class': 'form-select',
-            }),
-            'category': forms.Select(attrs={
-                'class': 'form-select',
-            }),
-            'content': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 6,
-                'placeholder': 'Explain your question or topic in detail...',
-            }),
-            'tags': forms.CheckboxSelectMultiple(),
+            "title": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter a clear, concise title",
+                }
+            ),
+            "course": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            ),
+            "resource": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            ),
+            "category": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            ),
+            "content": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 6,
+                    "placeholder": "Explain your question or topic in detail...",
+                }
+            ),
+            "tags": forms.CheckboxSelectMultiple(),
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['resource'].queryset = Resource.objects.none()
-        if 'course' in self.data:
+        self.fields["resource"].queryset = Resource.objects.none()
+        if "course" in self.data:
             try:
-                course_id = int(self.data.get('course'))
-                self.fields['resource'].queryset = Resource.objects.filter(course_id=course_id)
+                course_id = int(self.data.get("course"))
+                self.fields["resource"].queryset = Resource.objects.filter(
+                    course_id=course_id
+                )
             except (ValueError, TypeError):
                 pass
         elif self.instance.pk and self.instance.course:
-            self.fields['resource'].queryset = Resource.objects.filter(course=self.instance.course)
+            self.fields["resource"].queryset = Resource.objects.filter(
+                course=self.instance.course
+            )
+
 
 class CreateReplyForm(forms.ModelForm):
     class Meta:
         model = Reply
-        fields = ['content']
+        fields = ["content"]
         widgets = {
-            'content': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 3,
-                'placeholder': 'Write your reply...',
-            })
+            "content": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 3,
+                    "placeholder": "Write your reply...",
+                }
+            )
         }
+
 
 class CreateReportForm(forms.ModelForm):
     class Meta:
         model = Report
-        fields = ['reason']
+        fields = ["reason"]
         widgets = {
-            'reason': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 3,
-                'placeholder': 'Write the reason for report...',
-            })
+            "reason": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 3,
+                    "placeholder": "Write the reason for report...",
+                }
+            )
         }

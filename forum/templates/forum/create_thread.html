@@ -1,124 +1,77 @@
 {% extends "forum/base.html" %}
-
 {% block title %}Create Thread | StudyDeck Forum{% endblock %}
-
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-lg-8 col-md-10">
-
-    <div class="card shadow-sm border-0" style="background-color: #121212;">
-
-      <div class="card-body p-4">
-
-        <!-- Header -->
-        <h3 class="fw-bold text-white mb-1">
-          Create a new thread
-        </h3>
-        <p class="text-muted mb-4">
-          Ask a question, share resources, or start a discussion
-        </p>
-
-        <form method="post" action="{% url 'create-thread' %}">
-          {% csrf_token %}
-
-          <!-- Title -->
-          <div class="mb-3">
-            <label class="form-label fw-semibold text-white">
-              Thread Title
-            </label>
-            {{ form.title }}
-            {% for error in form.title.errors %}
-            <div class="text-danger small mt-1">{{ error }}</div>
-            {% endfor %}
-          </div>
-
-          <!-- Course -->
-          <div class="mb-3">
-            <label class="form-label fw-semibold text-white">
-              Course
-            </label>
-            {{ form.course }}
-            <div class="form-text text-muted">
-              Select the course this thread belongs to
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm border-0" style="background-color: #121212;">
+                <div class="card-body p-4">
+                    <!-- Header -->
+                    <h3 class="fw-bold text-white mb-1">Create a new thread</h3>
+                    <p class="text-muted mb-4">Ask a question, share resources, or start a discussion</p>
+                    <form method="post" action="{% url 'create-thread' %}">
+                        {% csrf_token %}
+                        <!-- Title -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-white">Thread Title</label>
+                            {{ form.title }}
+                            {% for error in form.title.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                        <!-- Course -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-white">Course</label>
+                            {{ form.course }}
+                            <div class="form-text text-muted">Select the course this thread belongs to</div>
+                        </div>
+                        <!-- Resource -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-white">Resource</label>
+                            {{ form.resource }}
+                            <div class="form-text text-muted">Only resources for the selected course are shown</div>
+                        </div>
+                        <!-- Category -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-white">Category</label>
+                            {{ form.category }}
+                        </div>
+                        <!-- Tags -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-white">Tags</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for checkbox in form.tags %}
+                                    <label class="btn btn-outline-secondary btn-sm">
+                                        {{ checkbox.tag }}
+                                        {{ checkbox.choice_label }}
+                                    </label>
+                                {% endfor %}
+                            </div>
+                            <div class="form-text text-muted">Choose relevant tags (max 5 recommended)</div>
+                            {% if form.tags.errors %}<div class="text-danger small mt-1">{{ form.tags.errors }}</div>{% endif %}
+                        </div>
+                        <!-- Content -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-white">Thread Content</label>
+                            {{ form.content }}
+                            {% for error in form.content.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                        <!-- Actions -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-4">Create Thread</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-          </div>
-
-          <!-- Resource -->
-          <div class="mb-3">
-            <label class="form-label fw-semibold text-white">
-              Resource
-            </label>
-            {{ form.resource }}
-            <div class="form-text text-muted">
-              Only resources for the selected course are shown
-            </div>
-          </div>
-
-          <!-- Category -->
-          <div class="mb-3">
-            <label class="form-label fw-semibold text-white">
-              Category
-            </label>
-            {{ form.category }}
-          </div>
-
-          <!-- Tags -->
-          <div class="mb-3">
-            <label class="form-label fw-semibold text-white">
-              Tags
-            </label>
-
-            <div class="d-flex flex-wrap gap-2">
-              {% for checkbox in form.tags %}
-              <label class="btn btn-outline-secondary btn-sm">
-                {{ checkbox.tag }}
-                {{ checkbox.choice_label }}
-              </label>
-              {% endfor %}
-            </div>
-
-            <div class="form-text text-muted">
-              Choose relevant tags (max 5 recommended)
-            </div>
-
-            {% if form.tags.errors %}
-            <div class="text-danger small mt-1">
-              {{ form.tags.errors }}
-            </div>
-            {% endif %}
-          </div>
-
-          <!-- Content -->
-          <div class="mb-4">
-            <label class="form-label fw-semibold text-white">
-              Thread Content
-            </label>
-            {{ form.content }}
-            {% for error in form.content.errors %}
-            <div class="text-danger small mt-1">{{ error }}</div>
-            {% endfor %}
-          </div>
-
-          <!-- Actions -->
-          <div class="d-flex justify-content-between align-items-center">
-            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
-              Cancel
-            </a>
-
-            <button type="submit" class="btn btn-primary px-4">
-              Create Thread
-            </button>
-          </div>
-
-        </form>
-
-      </div>
+        </div>
     </div>
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script>
+  let easyMDE = new EasyMDE({ element: document.getElementById("id_content"), forceSync: true, hideIcons: ["side-by-side", "fullscreen"],
 
-  </div>
-</div>
+  shortcuts: {
+    toggleFullScreen: null,
+    toggleSideBySide: null,
+  } })
 
-<script>
   document.getElementById("id_course").addEventListener("change", function () {
     const courseId = this.value;
     const resourceSelect = document.getElementById("id_resource");
@@ -138,6 +91,5 @@
         });
       });
   });
-</script>
-
+    </script>
 {% endblock %}

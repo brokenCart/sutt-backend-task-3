@@ -9,41 +9,93 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forum', '0006_alter_report_options'),
+        ("forum", "0006_alter_report_options"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='reply',
-            name='upvotes',
+            model_name="reply",
+            name="upvotes",
         ),
         migrations.RemoveField(
-            model_name='thread',
-            name='upvotes',
+            model_name="thread",
+            name="upvotes",
         ),
         migrations.CreateModel(
-            name='UpvoteReply',
+            name="UpvoteReply",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_timestamp', models.DateTimeField(default=django.utils.timezone.now)),
-                ('reply', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forum.reply')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_timestamp",
+                    models.DateTimeField(default=django.utils.timezone.now),
+                ),
+                (
+                    "reply",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="forum.reply"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'constraints': [models.UniqueConstraint(fields=('reply', 'user'), name='unique_reply_upvote')],
+                "constraints": [
+                    models.UniqueConstraint(
+                        fields=("reply", "user"), name="unique_reply_upvote"
+                    )
+                ],
             },
         ),
         migrations.CreateModel(
-            name='UpvoteThread',
+            name="UpvoteThread",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_timestamp', models.DateTimeField(default=django.utils.timezone.now)),
-                ('thread', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='forum.thread')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_timestamp",
+                    models.DateTimeField(default=django.utils.timezone.now),
+                ),
+                (
+                    "thread",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="forum.thread"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'constraints': [models.UniqueConstraint(fields=('thread', 'user'), name='unique_thread_upvote')],
+                "constraints": [
+                    models.UniqueConstraint(
+                        fields=("thread", "user"), name="unique_thread_upvote"
+                    )
+                ],
             },
         ),
     ]

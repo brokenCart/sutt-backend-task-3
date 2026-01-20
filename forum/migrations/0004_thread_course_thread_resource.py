@@ -7,18 +7,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forum', '0003_category_thread_category'),
+        ("forum", "0003_category_thread_category"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='thread',
-            name='course',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='forum.course'),
+            model_name="thread",
+            name="course",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="forum.course",
+            ),
         ),
         migrations.AddField(
-            model_name='thread',
-            name='resource',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='forum.resource'),
+            model_name="thread",
+            name="resource",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="forum.resource",
+            ),
         ),
     ]

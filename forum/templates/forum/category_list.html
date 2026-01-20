@@ -1,17 +1,12 @@
 {% extends "forum/base.html" %}
-
 {% block content %}
-<h4 class="mb-3">All Categories</h4>
-
-<div class="list-group">
-  {% for category in categories %}
-  <a href="{% url 'category-detail' category.slug %}" class="list-group-item list-group-item-action">
-    {{ category.name }}
-  </a>
-  {% empty %}
-  <div class="alert alert-info">
-    No categories found.
-  </div>
-  {% endfor %}
-</div>
+    <h4 class="mb-3">All Categories</h4>
+    <div class="list-group">
+        {% for category in categories %}
+            <a href="{% url 'category-detail' category.slug %}"
+               class="list-group-item list-group-item-action">{{ category.name }}</a>
+        {% empty %}
+            <div class="alert alert-info">No categories found.</div>
+        {% endfor %}
+    </div>
 {% endblock %}

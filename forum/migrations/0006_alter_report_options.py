@@ -6,12 +6,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forum', '0005_report'),
+        ("forum", "0005_report"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='report',
-            options={'permissions': [('view_report_page', 'Can view a page with all the reports')]},
+            name="report",
+            options={
+                "permissions": [
+                    ("view_report_page", "Can view a page with all the reports")
+                ]
+            },
         ),
     ]

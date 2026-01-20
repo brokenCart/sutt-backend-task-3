@@ -1,192 +1,147 @@
 {% extends "forum/base.html" %}
 {% load static %}
-
+{% load markdown_extras %}
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-lg-9">
-
-    {% for thread in page_obj %}
-    <div class="card mb-3 shadow-sm {% if thread.is_locked %}border-warning bg-warning bg-opacity-10{% endif %}">
-
-      <div class="card-body">
-
-        <!-- FLEX WRAPPER -->
-        <div class="d-flex gap-3">
-
-          <!-- Profile Picture -->
-          <div class="mt-1">
-            {% if thread.author and thread.author.socialaccount_set.first.extra_data.picture %}
-            <img src="{{ thread.author.socialaccount_set.first.extra_data.picture }}"
-              class="rounded-circle border border-secondary" width="44" height="44" referrerpolicy="no-referrer"
-              alt="Profile">
-            {% else %}
-            <img src="{% static 'forum/default_user.jpg' %}" class="rounded-circle border border-secondary" width="44"
-              height="44" alt="Profile">
-            {% endif %}
-          </div>
-
-          <!-- Thread Content -->
-          <div class="flex-grow-1">
-
-            <!-- TITLE -->
-            <div class="d-flex align-items-center gap-2 mb-1">
-              <h5 class="card-title mb-0">
-                {{ thread.title }}
-              </h5>
-
-              {% if thread.is_locked %}
-              <span class="badge bg-warning text-dark">
-                🔒 Locked
-              </span>
-              {% endif %}
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            {% for thread in page_obj %}
+                <div class="card mb-3 shadow-sm {% if thread.is_locked %}border-warning bg-warning bg-opacity-10{% endif %}">
+                    <div class="card-body">
+                        <!-- FLEX WRAPPER -->
+                        <div class="d-flex gap-3">
+                            <!-- Profile Picture -->
+                            <div class="mt-1">
+                                {% if thread.author and thread.author.socialaccount_set.first.extra_data.picture %}
+                                    <img src="{{ thread.author.socialaccount_set.first.extra_data.picture }}"
+                                         class="rounded-circle border border-secondary"
+                                         width="44"
+                                         height="44"
+                                         referrerpolicy="no-referrer"
+                                         alt="Profile">
+                                {% else %}
+                                    <img src="{% static 'forum/default_user.jpg' %}"
+                                         class="rounded-circle border border-secondary"
+                                         width="44"
+                                         height="44"
+                                         alt="Profile">
+                                {% endif %}
+                            </div>
+                            <!-- Thread Content -->
+                            <div class="flex-grow-1">
+                                <!-- TITLE -->
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <h5 class="card-title mb-0">{{ thread.title }}</h5>
+                                    {% if thread.is_locked %}<span class="badge bg-warning text-dark">🔒 Locked</span>{% endif %}
+                                </div>
+                                <!-- Meta info -->
+                                <div class="text-muted small mb-2">
+                                    Posted by
+                                    {% if thread.author %}
+                                        {{ thread.author.get_full_name }}
+                                    {% else %}
+                                        <em>Deleted user</em>
+                                    {% endif %}
+                                    · {{ thread.created_timestamp|timesince }} ago
+                                </div>
+                                <!-- Category & Course -->
+                                <div class="mb-2">
+                                    {% if thread.category %}<span class="badge bg-primary me-2">{{ thread.category.name }}</span>{% endif %}
+                                    {% if thread.course %}
+                                        <span class="badge bg-success">{{ thread.course.code }}: {{ thread.course.title }}</span>
+                                    {% endif %}
+                                </div>
+                                <!-- Thread content (preview) -->
+                                <p class="card-text">{{ thread.content|markdownify|safe|truncatechars:200 }}</p>
+                                <!-- Tags -->
+                                {% if thread.tags.all %}
+                                    <div class="mb-2">
+                                        {% for tag in thread.tags.all %}<span class="badge bg-secondary me-1">#{{ tag.name }}</span>{% endfor %}
+                                    </div>
+                                {% endif %}
+                                <!-- Actions -->
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <!-- Upvotes -->
+                                    <span class="text-muted small">
+                                        👍 <span class="thread-upvote-count" data-thread-id="{{ thread.id }}">0</span> upvotes
+                                </span>
+                                <div class="d-flex gap-2">
+                                    <!-- View thread -->
+                                    <a href="{% url 'thread-view' thread.category.slug thread.id %}"
+                                       class="btn btn-sm btn-outline-primary">View Discussion</a>
+                                    {% if user.is_authenticated %}
+                                        {# MODERATOR: can always delete #}
+                                        {% if perms.forum.delete_any_thread %}
+                                            <form method="post"
+                                                  action="{% url 'delete-thread' thread.id %}"
+                                                  class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        onclick="return confirm('Are you sure you want to delete this thread?');">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                            {# AUTHOR: only if NOT locked #}
+                                        {% elif thread.author == user and not thread.is_locked %}
+                                            <form method="post"
+                                                  action="{% url 'delete-thread' thread.id %}"
+                                                  class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        onclick="return confirm('Are you sure you want to delete this thread?');">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.flex-grow-1 -->
+                    </div>
+                    <!-- /.d-flex -->
+                </div>
             </div>
-
-
-            <!-- Meta info -->
-            <div class="text-muted small mb-2">
-              Posted by
-              {% if thread.author %}
-              {{ thread.author.get_full_name }}
-              {% else %}
-              <em>Deleted user</em>
-              {% endif %}
-              · {{ thread.created_timestamp|timesince }} ago
-            </div>
-
-            <!-- Category & Course -->
-            <div class="mb-2">
-              {% if thread.category %}
-              <span class="badge bg-primary me-2">
-                {{ thread.category.name }}
-              </span>
-              {% endif %}
-
-              {% if thread.course %}
-              <span class="badge bg-success">
-                {{ thread.course.code }}: {{ thread.course.title }}
-              </span>
-              {% endif %}
-            </div>
-
-            <!-- Thread content (preview) -->
-            <p class="card-text">
-              {{ thread.content|truncatechars:200 }}
-            </p>
-
-            <!-- Tags -->
-            {% if thread.tags.all %}
-            <div class="mb-2">
-              {% for tag in thread.tags.all %}
-              <span class="badge bg-secondary me-1">
-                #{{ tag.name }}
-              </span>
-              {% endfor %}
-            </div>
-            {% endif %}
-
-            <!-- Actions -->
-            <div class="d-flex justify-content-between align-items-center mt-2">
-
-              <!-- Upvotes -->
-              <span class="text-muted small">
-                👍 <span class="thread-upvote-count" data-thread-id="{{ thread.id }}">
-                  0
-                </span> upvotes
-              </span>
-
-
-              <div class="d-flex gap-2">
-
-                <!-- View thread -->
-                <a href="{% url 'thread-view' thread.category.slug thread.id %}" class="btn btn-sm btn-outline-primary">
-                  View Discussion
-                </a>
-
-                {% if user.is_authenticated %}
-
-                {# MODERATOR: can always delete #}
-                {% if perms.forum.delete_any_thread %}
-                <form method="post" action="{% url 'delete-thread' thread.id %}" class="d-inline">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-sm btn-outline-danger"
-                    onclick="return confirm('Are you sure you want to delete this thread?');">
-                    Delete
-                  </button>
-                </form>
-
-                {# AUTHOR: only if NOT locked #}
-                {% elif thread.author == user and not thread.is_locked %}
-                <form method="post" action="{% url 'delete-thread' thread.id %}" class="d-inline">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-sm btn-outline-danger"
-                    onclick="return confirm('Are you sure you want to delete this thread?');">
-                    Delete
-                  </button>
-                </form>
-                {% endif %}
-
-                {% endif %}
-              </div>
-
-            </div>
-
-          </div> <!-- /.flex-grow-1 -->
-        </div> <!-- /.d-flex -->
-
-      </div>
-    </div>
-    {% empty %}
-    <div class="alert alert-info text-center">
-      No discussions yet. Be the first to start one!
-    </div>
-    {% endfor %}
-
-    <!-- Pagination -->
-    <nav aria-label="Thread pagination">
-      <ul class="pagination justify-content-center mt-4">
-
-        {% if page_obj.has_previous %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
-            Previous
-          </a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-          <span class="page-link">Previous</span>
-        </li>
-        {% endif %}
-
-        {% for num in page_obj.paginator.page_range %}
-        {% if page_obj.number == num %}
-        <li class="page-item active">
-          <span class="page-link">{{ num }}</span>
-        </li>
-        {% else %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-        </li>
-        {% endif %}
+        {% empty %}
+            <div class="alert alert-info text-center">No discussions yet. Be the first to start one!</div>
         {% endfor %}
-
-        {% if page_obj.has_next %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.next_page_number }}">
-            Next
-          </a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-          <span class="page-link">Next</span>
-        </li>
-        {% endif %}
-
-      </ul>
-    </nav>
-
-  </div>
+        <!-- Pagination -->
+        <nav aria-label="Thread pagination">
+            <ul class="pagination justify-content-center mt-4">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Previous</span>
+                    </li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Next</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
 </div>
-
 <script>
   document.addEventListener("DOMContentLoaded", () => {
 
@@ -205,5 +160,4 @@
 
   });
 </script>
-
 {% endblock content %}
