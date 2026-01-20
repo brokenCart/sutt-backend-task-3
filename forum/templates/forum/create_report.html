@@ -1,42 +1,43 @@
-{% extends "forum/base.html" %}
+{% extends 'forum/base.html' %}
 {% load static %}
 {% block content %}
-    <div class="row justify-content-center">
-        <div class="col-lg-7">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h4 class="mb-3">🚩 Report {{ object_type|title }}</h4>
-                    <!-- CONTEXT PREVIEW -->
-                    <div class="alert alert-light border mb-4">
-                        {% if object_type == "thread" %}
-                            <strong>Thread:</strong> {{ object.title }}
-                            <br>
-                            <small class="text-muted">Posted by {{ object.author.get_full_name|default:"Deleted user" }}</small>
-                            <hr>
-                            <p class="mb-0">{{ object.content|truncatewords:50 }}</p>
-                        {% elif object_type == "reply" %}
-                            <strong>Reply by:</strong>
-                            {{ object.author.get_full_name|default:"Deleted user" }}
-                            <hr>
-                            <p class="mb-0">{{ object.content|truncatewords:50 }}</p>
-                        {% endif %}
-                    </div>
-                    <!-- REPORT FORM -->
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Reason for reporting</label>
-                            {{ form.reason }}
-                            {% if form.reason.errors %}<div class="text-danger small mt-1">{{ form.reason.errors.0 }}</div>{% endif %}
-                        </div>
-                        <div class="d-flex justify-content-end gap-2 mt-4">
-                            <a href="{{ 'javascript:history.back() ' }}"
-                               class="btn btn-outline-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-danger">Submit Report</button>
-                        </div>
-                    </form>
-                </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h4 class="mb-3">🚩 Report {{ object_type|title }}</h4>
+          <!-- CONTEXT PREVIEW -->
+          <div class="alert alert-light border mb-4">
+            {% if object_type == 'thread' %}
+              <strong>Thread:</strong> {{ object.title }}
+              <br />
+              <small class="text-muted">Posted by {{ object.author.get_full_name|default:'Deleted user' }}</small>
+              <hr />
+              <p class="mb-0">{{ object.content|truncatewords:50 }}</p>
+            {% elif object_type == 'reply' %}
+              <strong>Reply by:</strong>
+              {{ object.author.get_full_name|default:'Deleted user' }}
+              <hr />
+              <p class="mb-0">{{ object.content|truncatewords:50 }}</p>
+            {% endif %}
+          </div>
+          <!-- REPORT FORM -->
+          <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Reason for reporting</label>
+              {{ form.reason }}
+              {% if form.reason.errors %}
+                <div class="text-danger small mt-1">{{ form.reason.errors.0 }}</div>
+              {% endif %}
             </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <a href="javascript:history.back() " class="btn btn-outline-secondary">Cancel</a>
+              <button type="submit" class="btn btn-danger">Submit Report</button>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
-{% endblock content %}
+  </div>
+{% endblock %}

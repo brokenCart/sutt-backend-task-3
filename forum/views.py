@@ -1,8 +1,14 @@
+import threading
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.postgres.search import TrigramSimilarity
+from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 
 from . import models
 from .forms import CreateReplyForm, CreateReportForm, CreateThreadForm
@@ -17,6 +23,17 @@ def home(request, category_slug=None):
     )
     if category_slug:
         threads = threads.filter(category__slug=category_slug)
+    search_query = request.GET.get("search")
+    if search_query:
+        if settings.DEBUG:
+            threads = threads.filter(title__contains=search_query)
+        else:
+            # NOTE: The database should be PostgreSQL
+            threads = (
+                threads.annotate(similarity=TrigramSimilarity("title", search_query))
+                .filter(similarity__gt=0.3)
+                .order_by("-similarity")
+            )
     paginator = Paginator(threads, PER_PAGE)
     page_number = request.GET.get("page", 1)
     page_obj = paginator.get_page(page_number)
@@ -70,6 +87,19 @@ def create_thread(request):
     return render(request, "forum/create_thread.html", {"form": form})
 
 
+def send_email_async(subject, message, to_email):
+    def task():
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [to_email],
+            fail_silently=True,
+        )
+
+    threading.Thread(target=task).start()
+
+
 @login_required
 def create_reply(request, category_slug, pk, parent_id=None):
     thread = get_object_or_404(models.Thread, pk=pk, category__slug=category_slug)
@@ -86,6 +116,24 @@ def create_reply(request, category_slug, pk, parent_id=None):
             reply.parent = parent
             reply.author = request.user
             reply.save()
+            if parent and parent.author != reply.author:
+                subject = f"New reply on the thread: {thread.title}"
+                thread_url = request.build_absolute_uri(
+                    reverse("thread-view", args=[thread.category.slug, thread.id])
+                )
+                message = (
+                    f"{reply.author.username} replied:\n{reply.content}\n{thread_url}"
+                )
+                send_email_async(subject, message, thread.author.email)
+            elif not parent and thread.author != reply.author:
+                subject = f"New reply on your thread: {thread.title}"
+                thread_url = request.build_absolute_uri(
+                    reverse("thread-view", args=[thread.category.slug, thread.id])
+                )
+                message = (
+                    f"{reply.author.username} replied:\n{reply.content}\n{thread_url}"
+                )
+                send_email_async(subject, message, thread.author.email)
             messages.success(request, f"Your reply has been created!")
             return redirect(
                 "thread-view", category_slug=thread.category.slug, pk=thread.pk
