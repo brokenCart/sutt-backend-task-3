@@ -122,7 +122,7 @@ def create_reply(request, category_slug, pk, parent_id=None):
                     reverse("thread-view", args=[thread.category.slug, thread.id])
                 )
                 message = (
-                    f"{reply.author.username} replied:\n{reply.content}\n{thread_url}"
+                    f"You:\n{reply.parent.content}\n\n{reply.author.username} replied:\n{reply.content}\n{thread_url}"
                 )
                 send_email_async(subject, message, thread.author.email)
             elif not parent and thread.author != reply.author:
