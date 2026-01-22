@@ -125,6 +125,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
