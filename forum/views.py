@@ -25,15 +25,13 @@ def home(request, category_slug=None):
         threads = threads.filter(category__slug=category_slug)
     search_query = request.GET.get("search")
     if search_query:
-        if settings.DEBUG:
-            threads = threads.filter(title__contains=search_query)
-        else:
-            # NOTE: The database should be PostgreSQL
-            threads = (
-                threads.annotate(similarity=TrigramSimilarity("title", search_query))
-                .filter(similarity__gt=0.3)
-                .order_by("-similarity")
-            )
+        # NOTE: The database should be PostgreSQL
+        threads = (
+            threads.annotate(similarity=TrigramSimilarity("title", search_query))
+            .filter(similarity__gt=0.3)
+            .order_by("-similarity")
+        )
+
     paginator = Paginator(threads, PER_PAGE)
     page_number = request.GET.get("page", 1)
     page_obj = paginator.get_page(page_number)
@@ -122,7 +120,7 @@ def create_reply(request, category_slug, pk, parent_id=None):
                     reverse("thread-view", args=[thread.category.slug, thread.id])
                 )
                 message = (
-                    f"You:\n{reply.parent.content}\n\n{reply.author.username} replied:\n{reply.content}\n{thread_url}"
+                    f"You: \n{reply.parent.content}\n\n{reply.author.username} replied: \n{reply.content}\n{thread_url}"
                 )
                 send_email_async(subject, message, thread.author.email)
             elif not parent and thread.author != reply.author:
@@ -131,10 +129,10 @@ def create_reply(request, category_slug, pk, parent_id=None):
                     reverse("thread-view", args=[thread.category.slug, thread.id])
                 )
                 message = (
-                    f"{reply.author.username} replied:\n{reply.content}\n{thread_url}"
+                    f"{reply.author.username} replied: \n{reply.content}\n{thread_url}"
                 )
                 send_email_async(subject, message, thread.author.email)
-            messages.success(request, f"Your reply has been created!")
+            messages.success(request, "Your reply has been created!")
             return redirect(
                 "thread-view", category_slug=thread.category.slug, pk=thread.pk
             )

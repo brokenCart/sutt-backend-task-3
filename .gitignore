@@ -23,7 +23,8 @@ env/
 .env/
 
 # Environment Variables
-.env
+.env.dev
+.env.prod
 
 # Django-specific
 *.log
