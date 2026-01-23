@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.postgres.search import TrigramSimilarity
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
+from django.db.models import Count
 from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -18,11 +19,24 @@ PER_PAGE = 10
 
 @login_required
 def home(request, category_slug=None):
-    threads = models.Thread.objects.order_by("-created_timestamp").filter(
-        is_deleted=False
-    )
+    threads = models.Thread.objects.filter(is_deleted=False)
     if category_slug:
         threads = threads.filter(category__slug=category_slug)
+
+    sort = request.GET.get("sort", "latest")
+    order = request.GET.get("order", "desc")
+
+    if sort == "latest":
+        order_field = "created_timestamp"
+    elif sort == "popular":
+        threads = threads.annotate(upvote_count=Count("upvotethread"))
+        order_field = "upvote_count"
+
+    if order == "desc":
+        threads = threads.order_by(f"-{order_field}")
+    else:
+        threads = threads.order_by(order_field)
+
     search_query = request.GET.get("search")
     if search_query:
         # NOTE: The database should be PostgreSQL
@@ -35,7 +49,11 @@ def home(request, category_slug=None):
     paginator = Paginator(threads, PER_PAGE)
     page_number = request.GET.get("page", 1)
     page_obj = paginator.get_page(page_number)
-    return render(request, "forum/home.html", context={"page_obj": page_obj})
+    return render(
+        request,
+        "forum/home.html",
+        context={"page_obj": page_obj, "sort": sort, "order": order},
+    )
 
 
 @login_required
@@ -44,6 +62,21 @@ def thread_view(request, category_slug, pk):
     if thread.is_deleted:
         return HttpResponseForbidden()
     replies = models.Reply.objects.filter(thread__id=pk, is_deleted=False)
+
+    sort = request.GET.get("sort", "latest")
+    order = request.GET.get("order", "desc")
+
+    if sort == "latest":
+        order_field = "created_timestamp"
+    elif sort == "popular":
+        replies = replies.annotate(upvote_count=Count("upvotereply"))
+        order_field = "upvote_count"
+
+    if order == "desc":
+        replies = replies.order_by(f"-{order_field}")
+    else:
+        replies = replies.order_by(order_field)
+
     paginator = Paginator(replies, PER_PAGE)
     page_number = request.GET.get("page", 1)
     page_obj = paginator.get_page(page_number)
@@ -60,6 +93,8 @@ def thread_view(request, category_slug, pk):
             "page_obj": page_obj,
             "reply_form": reply_form,
             "reply_page_map": reply_page_map,
+            "sort": sort,
+            "order": order,
         },
     )
 
@@ -119,9 +154,7 @@ def create_reply(request, category_slug, pk, parent_id=None):
                 thread_url = request.build_absolute_uri(
                     reverse("thread-view", args=[thread.category.slug, thread.id])
                 )
-                message = (
-                    f"You: \n{reply.parent.content}\n\n{reply.author.username} replied: \n{reply.content}\n{thread_url}"
-                )
+                message = f"You: \n{reply.parent.content}\n\n{reply.author.username} replied: \n{reply.content}\n{thread_url}"
                 send_email_async(subject, message, thread.author.email)
             elif not parent and thread.author != reply.author:
                 subject = f"New reply on your thread: {thread.title}"
