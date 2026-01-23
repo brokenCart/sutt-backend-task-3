@@ -30,6 +30,7 @@ def markdownify(text):
             "li",
             "blockquote",
             "br",
+            "img",
         ],
     )
     return clean_html
