@@ -43,8 +43,6 @@
                     <span class="badge bg-success">{{ thread.course.code }}: {{ thread.course.title }}</span>
                   {% endif %}
                 </div>
-                <!-- Thread content (preview) -->
-                <p class="card-text">{{ thread.content|markdownify|safe|truncatechars:200 }}</p>
                 <!-- Tags -->
                 {% if thread.tags.all %}
                   <div class="mb-2">
