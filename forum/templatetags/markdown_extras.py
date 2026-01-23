@@ -31,6 +31,12 @@ def markdownify(text):
             "blockquote",
             "br",
             "img",
+            "a",
         ],
+        attributes={
+            **bleach.sanitizer.ALLOWED_ATTRIBUTES,
+            "img": ["src", "alt", "title"],
+            "a": ["href", "title", "rel"],
+        },
     )
     return clean_html
