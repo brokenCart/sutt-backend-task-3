@@ -38,5 +38,6 @@ def markdownify(text):
             "img": ["src", "alt", "title"],
             "a": ["href", "title", "rel"],
         },
+        protocols=["http", "https", "data"],
     )
     return clean_html
